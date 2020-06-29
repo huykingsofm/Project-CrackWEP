@@ -87,6 +87,7 @@ ARP là một giao thức truy vấn địa chỉ ở tầng data link (chẳng 
 Các thiết bị thường xuyên gửi gói tin ARP đến AP để truy vấn địa chỉ MAC của các thiết bị khác. Vì WEP không có cơ chế phòng thủ cho replay attack, ta có thể sniff các gói tin ARP Request xuất phát từ thiết bị gửi đến AP. Sau đó liên tục gửi lại nó cho AP (tại đây, nếu ta không Fake Authenticate thì gói tin ARP sẽ bị từ chối).  
 
 Sau khi AP nhận gói tin ARP Request, nó broadcast gói ARP Request đó cho toàn bộ các thiết bị khác. Tại đây, các gói tin chứa IV được sinh ra. Ta vẫn sẽ liên tục gửi lại gói ARP Request đã sniff cho AP đến khi nó vẫn còn có hiệu lực.  
+
 Để thực hiện ARP Request replay attack, trên terminal máy ảo Kali, chạy câu lệnh:
 ```
 $ aireplay-ng -3 -b 64:70:02:92:BF:0A -h 48:86:E8:ED:01:00 wlan0mon
