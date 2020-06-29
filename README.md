@@ -67,8 +67,8 @@ Dữ liệu được capture sẽ được lưu trữ tại tệp tin WEP_crack
 *<p align = "center">Hình 3. Thông tin về mạng wifi và các thiết bị kết nối tới nó</p>*
 Một thiết bị kết nối đến wifi có địa chỉ MAC là `48:86:E8:ED:01:00`. Thiết bị này sẽ bị lợi dụng cho các bước tấn công sau này.
 #### Bước 5: Fake Authentication
-Để đảm có thể giao tiếp với Access Point cho công việc tấn công ARP Request Replay Attack, ta thực hiện fake authen đến AP mục tiêu.  
-Vì Access Point đang ở chế độ Open System Authentication nên ta có thể dễ dàng Fake authen thông qua câu lệnh sau: 
+Để có thể thực hiện tăng tốc tốc độ thu thập gói tin chứa IV, ta thực hiện Fake Authenticate đến AP mục tiêu, làm tiền đề cho tấn công ARP Request replay.  
+Vì Access Point đang ở chế độ Open System Authentication nên ta có thể dễ dàng Fake Authenticate thông qua câu lệnh sau: 
 ```
 aireplay-ng -1 0 -a 64:70:02:92:BF:0A -h 48:86:E8:ED:01:00 wlan0mon
 ```
@@ -76,7 +76,7 @@ aireplay-ng -1 0 -a 64:70:02:92:BF:0A -h 48:86:E8:ED:01:00 wlan0mon
 *<p align = "center">Hình 4. Phương pháp Open System Authentication được kích hoạt trên AP</p>*
 
 Lưu ý:  
-* Sau khi fake authen, mặc dù ta đã có thể giao tiếp với AP nhưng cả 2 sẽ không hiểu nhau (không giải mã được gói tin) vì không có key.
+* Sau khi Fake Authenticate, mặc dù ta đã có thể giao tiếp với AP nhưng cả 2 sẽ không hiểu nhau (không giải mã được gói tin) vì không có key.
 * Tuy nhiên, ta có thể thực hiện replay attack bằng cách gửi lại một gói tin từ một client khác gửi đến AP vì WEP không có cơ chế phòng thủ cho loại tấn công này.
 
 #### Bước 6: Tăng tốc độ thu thập gói tin có IV
@@ -84,7 +84,7 @@ Có thể các thiết bị có ít kết nối đến access point nên số l�
 
 ARP là một giao thức truy vấn địa chỉ ở tầng data link (chẳng hạn MAC) khi có địa chỉ ở tầng Internet (chẳng hạn IPv4).  
 
-Các thiết bị thường xuyên gửi gói tin ARP đến AP để truy vấn địa chỉ MAC của các thiết bị khác. Vì WEP không có cơ chế phòng thủ cho replay attack, ta có thể sniff các gói tin ARP Request xuất phát từ thiết bị gửi đến AP. Sau đó liên tục gửi lại nó cho AP (tại đây, nếu ta không fake authen thì gói tin ARP sẽ bị từ chối).  
+Các thiết bị thường xuyên gửi gói tin ARP đến AP để truy vấn địa chỉ MAC của các thiết bị khác. Vì WEP không có cơ chế phòng thủ cho replay attack, ta có thể sniff các gói tin ARP Request xuất phát từ thiết bị gửi đến AP. Sau đó liên tục gửi lại nó cho AP (tại đây, nếu ta không Fake Authenticate thì gói tin ARP sẽ bị từ chối).  
 
 Sau khi AP nhận gói tin ARP Request, nó broadcast gói ARP Request đó cho toàn bộ các thiết bị khác. Tại đây, các gói tin chứa IV được sinh ra. 
 
