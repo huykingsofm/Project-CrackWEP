@@ -9,18 +9,27 @@ Môn học: An toàn không dây và di động.
 Máy tấn công
 > OS: Kali Linux 18 64bit  
 > RAM: 2GB  
-> CPU: i5 540m  
+> CPU: i5 540m    
 
 Wifi Adapter
-> abc
+```
+> Tenda W311MA  
+> MAC: 50:2B:73:DE:1A:EE   
+```
 
 Access Point
-> TP Link TP-WR841N Version 8.2
+```
+> TP Link TP-WR841N Version 8.2  
+> MAC: 64:70:02:92:BF:0A
+```
 
 Thiết bị mô phỏng kết nối với Access Point
+```
 > SmartPhone Nokia Lumia 530  
 > OS: Windows Phone 8.1  
 > RAM: 512MB  
+> MAC: 48:86:E8:ED:01:00 
+```
 ## 3. TỔNG QUAN QUÁ TRÌNH
 Bước 1: Tìm kiếm Access Point mục tiêu bằng airodump.  
 Bước 2: Thu thập các gói tin trao đổi có chứa IV của Access Point mục tiêu với các thiết bị đã kết nối với nó.  
@@ -58,6 +67,7 @@ Chuyển channel lắng nghe của wifi adapter trùng với Access Point mục 
 $ iwconfig wlan0mon channel 5
 ```
 ### Bước 4: Capture các gói tin của Access Point
+#### Môi trường Kali Linux
 Trên terminal máy ảo Kali: 
 ```
 $ airodump-ng -c 5 --bssid 64:70:02:92:BF:0A -w WEP_crack wlan0mon
@@ -66,6 +76,17 @@ Dữ liệu được capture sẽ được lưu trữ tại tệp tin WEP_crack
 ![airodump_capture](imgs/airodump_capture.jpg)
 *<p align = "center">Hình 3. Thông tin về mạng wifi và các thiết bị kết nối tới nó</p>*
 Một thiết bị kết nối đến wifi có địa chỉ MAC là `48:86:E8:ED:01:00`. Thiết bị này sẽ bị lợi dụng cho các bước tấn công sau này.
+#### Môi trường Windows
+Trên Windows, một công cụ khác được sử dụng để bắt các gói tin chứa IV là Commview.
+
+Công cụ commview được sử dụng khá đơn giản do có GUI. Chỉ cần bật ứng dụng, thiết lập một số thông số cho việc capture và khởi động tiến trình capture.
+
+Lưu ý: Commview chỉ hỗ trợ capture trên một số card mạng nhất định.
+![commview](imgs/commview/setup_logging.jpg)
+*<p align = "center">Hình 4. Thiết lập các thông số để bắt gói tin trong Commview</p>*
+
+Bản miễn phí của Commview chỉ cho phép bắt gói tin trong 5 phút. Sau khi bắt được các gói tin, ta cần chuyển logging của commview về dạng file *.cap để công cụ aircrack có thể crack được mật khẩu (Bước 6).
+
 ### Bước 5: Tăng tốc độ thu thập gói tin
 Có thể các thiết bị có ít kết nối đến access point nên số lượng gói tin thu thập không được nhiều, mất thời gian cho quá trình tấn công. Để tăng tốc độ thu thập các gói tin chứa IV, ta lợi dụng giao thức ARP.  
 
@@ -80,32 +101,37 @@ Lưu ý: Để AP nhận và xử lý gói ARP gửi đến, địa chỉ MAC ng
 #### Cách 1
 Fake authenticate MAC address của wifi adapter trên máy ảo Kali với AP để AP nghĩ rằng attacker đã kết nối với nó, từ đó cho phép nhận và xử lý các gói tin đến từ attacker. Trên terminal máy ảo Kali
 ```
+$ aireplay-ng -1 0 -a 64:70:02:92:BF:0A -h 50:2B:73:DE:1A:EE wlan0mon
 ```
+![fakeauth](imgs/5.1/fakeauth.jpg)
+*<p align = "center">Hình 5. Fake authentication</p>*
 Lưu ý: 
 * Mặc dù đã authenticate với AP, nhưng máy attacker vẫn không thể giao tiếp với AP một cách bình thường do không có WEP key để mã hóa và giải mã các gói tin.
 * Vì AP sử dụng mã hóa WEP với phương thức xác thực là Open System Authentication nên có thể dễ dàng fake authenticate.
 * Đối với mã hóa WEP sử dụng Shared Key, ta cần thu được PRGA xor file của những client đang kết nối với AP, từ đó mới có thể fake authenticate với AP.
 
 ![open_system_authen](imgs/open_system_authen.jpg)
-*<p align = "center">Hình 4. Phương pháp Open System Authentication được kích hoạt trên AP</p>*
+*<p align = "center">Hình 6. Phương pháp Open System Authentication được kích hoạt trên AP</p>*
 
 Thực hiện tấn công ARP Request Replay với địa chỉ MAC nguồn là địa chỉ MAC đã fake authenticate với AP.
 ```
+$ aireplay-ng -3 -b 64:70:02:92:BF:0A -h 50:2B:73:DE:1A:EE wlan0mon
 ```
 
-![aireplay_before](imgs/aireplay_before.jpg)
-*<p align = "center">Hình 5. Cần chờ một khoảng thời gian để có thể lấy được 1 gói tin ARP Request phục vụ cho replay attack</p>*
-![aireplay_after](imgs/aireplay_after.jpg)
-*<p align = "center">Hình 6. Sau khi có được gói ARP Request bất kỳ</p>*
+![aireplay_before](imgs/5.1/aireplay_before.jpg)
+*<p align = "center">Hình 7. Cần chờ một khoảng thời gian để có thể lấy được 1 gói tin ARP Request phục vụ cho replay attack</p>*
+![aireplay_after](imgs/5.1/aireplay_after.jpg)
+*<p align = "center">Hình 8. Sau khi có được gói ARP Request bất kỳ</p>*
 #### Cách 2
 Thực hiện tấn công ARP Request Replay với địa chỉ MAC nguồn chính là địa chỉ MAC của một thiết bị đã kết nối với AP, do đó ta không cần fake authenticate với AP.  
 Trên terminal máy ảo Kali:
 ```
+$ aireplay-ng -3 -b 64:70:02:92:BF:0A -h 48:86:E8:ED:01:00 wlan0mon
 ```
-![aireplay_before](imgs/aireplay_before.jpg)
-*<p align = "center">Hình 7. Cần chờ một khoảng thời gian để có thể lấy được 1 gói tin ARP Request phục vụ cho replay attack</p>*
-![aireplay_after](imgs/aireplay_after.jpg)
-*<p align = "center">Hình 8. Sau khi có được gói ARP Request bất kỳ</p>*
+![aireplay_before](imgs/5.2/aireplay_before.jpg)
+*<p align = "center">Hình 9. Cần chờ một khoảng thời gian để có thể lấy được 1 gói tin ARP Request phục vụ cho replay attack</p>*
+![aireplay_after](imgs/5.2/aireplay_after.jpg)
+*<p align = "center">Hình 10. Sau khi có được gói ARP Request bất kỳ</p>*
 
 
 ### Bước 6: Crack mật khẩu WEP
@@ -113,6 +139,12 @@ Sau khi thu được hàng loạt gói tin chứa IV. Ta tiến hành phân tíc
 ```
 aircrack-ng WEP_crack-01.cap
 ```
-Với `WEP_crack-01.cap` là file thu được từ quá trình bắt gói tin của `airodump-ng`.
+
+Đối với file .cap thu được từ Commview, vì các gói IV thu được từ nhiều AP khác nhau nên ta cần chỉ định AP cần crack, câu lệnh được biến đổi như sau:
+```
+aircrack-ng WEP_crack-01.cap -b 64:70:02:92:BF:0A
+```
+Với `WEP_crack-01.cap` là file thu được từ quá trình bắt gói tin của airodump-ng hoặc Commview.
+
 ![aircrack](imgs/aircrack.jpg)
-*<p align = "center">Hình 9. Mật khẩu tìm được là xerus</p>*
+*<p align = "center">Hình 11. Mật khẩu tìm được là xerus</p>*
