@@ -7,9 +7,11 @@ Môn học: An toàn không dây và di động.
 * An Văn Hiếu - 17520467
 ## 2. THÔNG SỐ THIẾT BỊ
 Máy tấn công
+```
 > OS: Kali Linux 18 64bit  
 > RAM: 2GB  
 > CPU: i5 540m    
+```
 
 Wifi Adapter
 ```
@@ -58,9 +60,11 @@ $ airmon-ng start wlan0
 ![airodump_to_monitor](imgs/airodump_to_monitor.jpg)
 *<p align = "center">Hình 2. Các mạng wifi trong tầm phát hiện</p>*
 Mạng wifi mục tiêu có tên TP-LINK_92BF0A
-> `Channel: 5`  
-> `BSSID: 64:70:02:92:BF:0A`  
-> `Encryt Method: WEP` 
+```
+> Channel: 5  
+> BSSID: 64:70:02:92:BF:0A  
+> Encryt Method: WEP 
+```
 
 Chuyển channel lắng nghe của wifi adapter trùng với Access Point mục tiêu. Trên terminal máy ảo Kali: 
 ```
