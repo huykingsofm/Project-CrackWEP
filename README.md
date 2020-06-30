@@ -1,4 +1,4 @@
-# REPRORT PROJECT: CrackWEP
+# REPORT PROJECT: CrackWEP
 Trường đại học Công Nghệ Thông Tin.  
 Giảng viên: Lê Kim Hùng  
 Môn học: An toàn không dây và di động.  
