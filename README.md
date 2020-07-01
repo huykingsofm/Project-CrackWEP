@@ -94,7 +94,7 @@ $ kismet
 
 Trên web, ta truy cập đến đường dẫn `http://localhost:2501` để truy cập kismet.
 ![kismet_capture](imgs/kismet/capture.jpg)
-*<p align = "center">Hình 4. Thông tin về mạng wifi và các thiết bị kết nối tới nó</p>*
+*<p align = "center">Hình 4. Thông tin về mạng wifi</p>*
 Chọn channel để bắt gói tin.
 ![kismet_channel](imgs/kismet/channel.jpg)
 *<p align = "center">Hình 5. Chọn channel 5</p>*
